@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -15,15 +16,17 @@ class PodcastProcessed implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
     
     private string $message;
-    
+    private User $user;    
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($message)
-    {
+    public function __construct(string $message, User $user)
+    { 
+        //$this->channel=$channel;
         $this->message=$message;
+        $this->user = $user;
     }
     
     /**
@@ -33,7 +36,7 @@ class PodcastProcessed implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('public.playground.1');
+        return new PresenceChannel('presence.channel.1');
     }
 
     public function broadcastAs()
@@ -43,7 +46,10 @@ class PodcastProcessed implements ShouldBroadcast
     }
     public function broadcastWith()
     {
-        return["message"=>$this->message] ;
+        return["message"=>$this->message,
+                'user'=> $this->user->only(['name','email'])
+            ] ;
+
         
     }
 }

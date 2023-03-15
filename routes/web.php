@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,6 +33,10 @@ Route::get('/ws', function () {
 });
 
 Route::post('/chat-message',function(Request $request){
-event(new \App\Events\PodcastProcessed($request->message));
+event(new \App\Events\PodcastProcessed($request->message,auth()->user()));
     return null ;
 });
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
